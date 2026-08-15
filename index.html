@@ -109,10 +109,15 @@
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: gif.title });
             share.textContent = 'تم فتح المشاركة ✓';
-          } else throw new Error();
+          } else {
+            const downloadUrl = URL.createObjectURL(file), link = document.createElement('a');
+            link.href = downloadUrl; link.download = 'gif-globe.gif'; link.click();
+            URL.revokeObjectURL(downloadUrl);
+            share.textContent = 'تم تحميل الـGIF';
+          }
         } catch {
-          window.open(`https://wa.me/?text=${encodeURIComponent(gif.url)}`, '_blank', 'noopener');
-          share.textContent = 'أُرسل الرابط كبديل';
+          window.open(gif.url, '_blank', 'noopener');
+          share.textContent = 'افتح الـGIF ثم احفظه';
         }
         setTimeout(() => { share.textContent = original; share.disabled = false; }, 2200);
         return;
