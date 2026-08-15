@@ -66,7 +66,7 @@
       results.innerHTML = items.length ? items.map(card).join('') : '<div class="status">لم تضف أي GIF إلى المفضلة بعد. اضغط ♡ على أي نتيجة لحفظها.</div>';
       renderFavoriteButtons(); favoritesToggle.innerHTML = '♥ المفضلة <span id="favoritesCount">' + items.length + '</span>';
     }
-    function card(g) { const gifUrl=g.url, title=g.title || activeTerm, whatsapp=`https://wa.me/?text=${encodeURIComponent(`${title}\n${gifUrl}`)}`, data=encodeURIComponent(JSON.stringify({url:gifUrl,preview_url:g.preview_url || gifUrl,title,source:g.source || 'GIF'})); return `<article class="gif"><img loading="lazy" src="${g.preview_url || gifUrl}" alt="${title.replace(/"/g,'&quot;')}"><span class="source-tag">${g.source || 'GIF'}</span><button class="favorite-button${isFavorite(gifUrl) ? ' is-favorite' : ''}" type="button" data-favorite="${data}" data-favorite-url="${encodeURIComponent(gifUrl)}" aria-label="${isFavorite(gifUrl) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${isFavorite(gifUrl) ? '♥' : '♡'}</button><button class="copy-link" type="button" data-gif-url="${encodeURIComponent(gifUrl)}">نسخ رابط الـGIF</button><a class="whatsapp-link" href="${whatsapp}" target="_blank" rel="noopener">مشاركة عبر واتساب</a></article>`; }
+    function card(g) { const gifUrl=g.url, title=g.title || activeTerm, data=encodeURIComponent(JSON.stringify({url:gifUrl,preview_url:g.preview_url || gifUrl,title,source:g.source || 'GIF'})); return `<article class="gif"><img loading="lazy" src="${g.preview_url || gifUrl}" alt="${title.replace(/"/g,'&quot;')}"><span class="source-tag">${g.source || 'GIF'}</span><button class="favorite-button${isFavorite(gifUrl) ? ' is-favorite' : ''}" type="button" data-favorite="${data}" data-favorite-url="${encodeURIComponent(gifUrl)}" aria-label="${isFavorite(gifUrl) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${isFavorite(gifUrl) ? '♥' : '♡'}</button><button class="copy-link" type="button" data-gif-url="${encodeURIComponent(gifUrl)}">نسخ رابط الـGIF</button><button class="whatsapp-link" type="button" data-share-gif="${data}">إرسال GIF عبر واتساب</button></article>`; }
     async function searchGifs(term='funny', page=1) {
       const isNewSearch = page === 1;
       showingFavorites = false; favoritesToggle.innerHTML = '♡ المفضلة <span id="favoritesCount">' + getFavorites().length + '</span>';
@@ -98,6 +98,25 @@
     results.addEventListener('click', async event => {
       const favorite = event.target.closest('[data-favorite]');
       if (favorite) { toggleFavorite(JSON.parse(decodeURIComponent(favorite.dataset.favorite))); return; }
+      const share = event.target.closest('[data-share-gif]');
+      if (share) {
+        const gif = JSON.parse(decodeURIComponent(share.dataset.shareGif)), original = share.textContent;
+        share.textContent = 'جارٍ تجهيز الـGIF…'; share.disabled = true;
+        try {
+          const response = await fetch(gif.url);
+          if (!response.ok) throw new Error();
+          const blob = await response.blob(), file = new File([blob], 'gif-globe.gif', { type: blob.type || 'image/gif' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: gif.title });
+            share.textContent = 'تم فتح المشاركة ✓';
+          } else throw new Error();
+        } catch {
+          window.open(`https://wa.me/?text=${encodeURIComponent(gif.url)}`, '_blank', 'noopener');
+          share.textContent = 'أُرسل الرابط كبديل';
+        }
+        setTimeout(() => { share.textContent = original; share.disabled = false; }, 2200);
+        return;
+      }
       const button = event.target.closest('[data-gif-url]');
       if (!button) return;
       const original = button.textContent;
