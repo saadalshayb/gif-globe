@@ -10,7 +10,7 @@
     header { max-width:1180px; padding:24px 24px 0; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
     .brand { display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.4px; direction:ltr; }
     .mark { width:36px; height:36px; display:grid; place-items:center; color:white; border-radius:12px; background:linear-gradient(135deg,var(--brand),var(--brand2)); font-size:18px; box-shadow:0 0 22px #e32a2080; }
-    .settings { border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:10px; padding:9px 13px; cursor:pointer; }
+    .favorites-toggle { border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:10px; padding:9px 13px; cursor:pointer; font:inherit; font-weight:bold; }.favorites-toggle:hover { border-color:var(--brand); color:#fff; }
     main { max-width:1180px; margin:auto; padding:68px 24px 50px; }
     .hero { text-align:center; max-width:850px; margin:auto; position:relative; isolation:isolate; }
     .dragon { position:absolute; width:min(370px,55vw); height:auto; top:-78px; left:-135px; z-index:-1; opacity:.88; filter:drop-shadow(0 0 16px #e32a2070); pointer-events:none; }
@@ -25,14 +25,14 @@
     h2 { font-size:21px; margin:0 0 6px; }.hint { margin:0; color:var(--muted); font-size:14px; }.count { color:var(--muted); white-space:nowrap; font-size:14px; }
     #results { columns:4 220px; column-gap:14px; }
     .gif { position:relative; display:inline-block; width:100%; margin:0 0 14px; overflow:hidden; vertical-align:top; border-radius:13px; background:var(--paper); border:1px solid var(--line); break-inside:avoid; box-shadow:0 10px 20px #0004; }
-    .gif img { width:100%; display:block; min-height:135px; object-fit:cover; }.source-tag { position:absolute; top:8px; right:8px; background:#111827c9; color:#fff; font-size:11px; padding:4px 7px; border-radius:6px; direction:ltr; }.copy-link { display:block; width:calc(100% - 24px); margin:10px 12px 7px; padding:8px 10px; text-align:center; color:var(--brand); background:#f0eeff; border:0; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; font-weight:bold; }.whatsapp-link { display:block; margin:0 12px 12px; padding:8px 10px; text-align:center; color:#fff; background:#25D366; border-radius:8px; text-decoration:none; font-size:13px; font-weight:bold; }
+    .gif img { width:100%; display:block; min-height:135px; object-fit:cover; }.source-tag { position:absolute; top:8px; right:8px; background:#111827c9; color:#fff; font-size:11px; padding:4px 7px; border-radius:6px; direction:ltr; }.favorite-button { position:absolute; top:8px; left:8px; width:34px; height:34px; border:0; border-radius:50%; background:#120c0ee0; color:#fff; cursor:pointer; font-size:18px; line-height:1; }.favorite-button:hover,.favorite-button.is-favorite { background:var(--brand); color:#fff; }.copy-link { display:block; width:calc(100% - 24px); margin:10px 12px 7px; padding:8px 10px; text-align:center; color:var(--brand); background:#f0eeff; border:0; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; font-weight:bold; }.whatsapp-link { display:block; margin:0 12px 12px; padding:8px 10px; text-align:center; color:#fff; background:#25D366; border-radius:8px; text-decoration:none; font-size:13px; font-weight:bold; }
     .status { padding:36px 10px; text-align:center; color:var(--muted); column-span:all; }.error { color:#bd2748; }.more-wrap { text-align:center; margin-top:12px; }.more { border:0; background:var(--brand); color:#fff; padding:11px 20px; border-radius:10px; cursor:pointer; font:inherit; font-weight:bold; }
     dialog { border:0; border-radius:16px; width:min(440px,calc(100% - 30px)); box-shadow:0 20px 80px #0004; padding:25px; color:var(--ink); } dialog::backdrop { background:#11182775; } dialog label { display:block; font-weight:bold; margin:14px 0 7px; } dialog input { width:100%; border:1px solid var(--line); border-radius:9px; padding:11px; font:inherit; direction:ltr; } dialog p { color:var(--muted); line-height:1.7; font-size:14px; } .dialog-actions { display:flex; gap:10px; margin-top:20px; }.primary { background:var(--brand); border:0; color:#fff; border-radius:9px; padding:10px 15px; font-weight:bold; cursor:pointer; }.secondary { background:#f1f1f5; border:0; color:var(--ink); border-radius:9px; padding:10px 15px; cursor:pointer; }
     footer { text-align:center; padding:25px; font-size:13px; color:var(--muted); } @media(max-width:560px) { main { padding-top:45px; } .search button{padding:0 15px} .bar{margin-top:48px} header{padding-inline:16px} main{padding-inline:16px} }
   </style>
 </head>
 <body>
-  <header><div class="brand"><span class="mark">G</span><span>GIF GLOBE</span></div></header>
+  <header><div class="brand"><span class="mark">G</span><span>GIF GLOBE</span></div><button class="favorites-toggle" id="favoritesToggle" type="button">♡ المفضلة <span id="favoritesCount">0</span></button></header>
   <main>
     <section class="hero">
       <svg class="dragon" viewBox="0 0 500 400" aria-hidden="true"><defs><linearGradient id="dragonRed" x1="0" x2="1"><stop stop-color="#540d12"/><stop offset="1" stop-color="#e32a20"/></linearGradient><linearGradient id="fire" x1="0" x2="1"><stop stop-color="#ffe566"/><stop offset=".5" stop-color="#ff6a00"/><stop offset="1" stop-color="#e32a20"/></linearGradient></defs><path fill="url(#dragonRed)" d="M375 112c-44-49-104-58-167-33l-88-39 52 68c-40 27-67 70-70 121l-49 59 74-21c31 54 87 81 147 70l-47-41c37-1 70-17 94-44l44 6-19-29c9-21 12-46 9-67l56-13-66-37z"/><path fill="#130709" d="M224 151c15-22 41-31 64-20-8 18-24 31-45 35z"/><circle cx="252" cy="160" r="8" fill="#ffe566"/><path fill="url(#fire)" d="M101 210C46 190 18 198 0 216c31 0 41 14 16 32 46 3 76-10 96-38l62 5-55-25z"/><path fill="url(#fire)" d="M92 228c-29 1-52 17-63 42 30-11 45-3 35 17 29-13 43-34 46-61z"/><path fill="#9a1717" d="M165 103l-42-76 75 51zM294 102l42-70-11 91z"/><path fill="none" stroke="#ff9a24" stroke-width="5" d="M144 256c28 19 65 29 105 20"/></svg>
@@ -46,10 +46,30 @@
   </main>
   <footer>GIF Globe · نتائج GIF متحركة داخل المنصة</footer>
   <script>
-    const results = document.getElementById('results'), query = document.getElementById('query'), loadMore = document.getElementById('loadMore');
-    let activeTerm = 'trending', activePage = 1, hasMore = false;
+    const results = document.getElementById('results'), query = document.getElementById('query'), loadMore = document.getElementById('loadMore'), favoritesToggle = document.getElementById('favoritesToggle');
+    let activeTerm = 'trending', activePage = 1, hasMore = false, showingFavorites = false;
+    const favoritesKey = 'gif-globe-favorites';
+    function getFavorites() { try { return JSON.parse(localStorage.getItem(favoritesKey)) || []; } catch { return []; } }
+    function setFavorites(items) { localStorage.setItem(favoritesKey, JSON.stringify(items)); updateFavoritesCount(); }
+    function updateFavoritesCount() { const count = document.getElementById('favoritesCount'); if (count) count.textContent = getFavorites().length; }
+    function isFavorite(url) { return getFavorites().some(item => item.url === url); }
+    function toggleFavorite(gif) {
+      const items = getFavorites(), index = items.findIndex(item => item.url === gif.url);
+      if (index >= 0) items.splice(index, 1); else items.unshift(gif);
+      setFavorites(items);
+      if (showingFavorites) showFavorites(); else renderFavoriteButtons();
+    }
+    function renderFavoriteButtons() { document.querySelectorAll('[data-favorite-url]').forEach(button => { const saved = isFavorite(decodeURIComponent(button.dataset.favoriteUrl)); button.classList.toggle('is-favorite', saved); button.textContent = saved ? '♥' : '♡'; button.setAttribute('aria-label', saved ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'); }); }
+    function showFavorites() {
+      showingFavorites = true; loadMore.hidden = true; document.getElementById('heading').textContent = 'GIFs المفضلة'; document.getElementById('subheading').textContent = 'محفوظة على هذا الجهاز فقط';
+      const items = getFavorites(); document.getElementById('count').textContent = `${items.length} مفضلة`;
+      results.innerHTML = items.length ? items.map(card).join('') : '<div class="status">لم تضف أي GIF إلى المفضلة بعد. اضغط ♡ على أي نتيجة لحفظها.</div>';
+      renderFavoriteButtons(); favoritesToggle.innerHTML = '♥ المفضلة <span id="favoritesCount">' + items.length + '</span>';
+    }
+    function card(g) { const gifUrl=g.url, title=g.title || activeTerm, whatsapp=`https://wa.me/?text=${encodeURIComponent(`${title}\n${gifUrl}`)}`, data=encodeURIComponent(JSON.stringify({url:gifUrl,preview_url:g.preview_url || gifUrl,title,source:g.source || 'GIF'})); return `<article class="gif"><img loading="lazy" src="${g.preview_url || gifUrl}" alt="${title.replace(/"/g,'&quot;')}"><span class="source-tag">${g.source || 'GIF'}</span><button class="favorite-button${isFavorite(gifUrl) ? ' is-favorite' : ''}" type="button" data-favorite="${data}" data-favorite-url="${encodeURIComponent(gifUrl)}" aria-label="${isFavorite(gifUrl) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${isFavorite(gifUrl) ? '♥' : '♡'}</button><button class="copy-link" type="button" data-gif-url="${encodeURIComponent(gifUrl)}">نسخ رابط الـGIF</button><a class="whatsapp-link" href="${whatsapp}" target="_blank" rel="noopener">مشاركة عبر واتساب</a></article>`; }
     async function searchGifs(term='funny', page=1) {
       const isNewSearch = page === 1;
+      showingFavorites = false; favoritesToggle.innerHTML = '♡ المفضلة <span id="favoritesCount">' + getFavorites().length + '</span>';
       if (isNewSearch) { activeTerm=term; activePage=1; results.className=''; results.innerHTML='<div class="status">جارٍ جلب النتائج المتحركة…</div>'; loadMore.hidden=true; }
       else loadMore.textContent='جارٍ التحميل…';
       document.getElementById('heading').textContent = term ? `نتائج: ${term}` : 'الأكثر تداولاً الآن';
@@ -60,7 +80,7 @@
         const payload = await response.json(), data = payload.data || [];
         if (!data.length) throw new Error();
         document.getElementById('count').textContent=page === 1 ? `${data.length} نتيجة` : `تم عرض ${page * 28} نتيجة`;
-        const cards=data.map(g=>{ const gifUrl=g.url, title=g.title || term, whatsapp=`https://wa.me/?text=${encodeURIComponent(`${title}\n${gifUrl}`)}`; return `<article class="gif"><img loading="lazy" src="${g.preview_url || gifUrl}" alt="${title.replace(/"/g,'&quot;')}"><span class="source-tag">${g.source || 'GIF'}</span><button class="copy-link" type="button" data-gif-url="${encodeURIComponent(gifUrl)}">نسخ رابط الـGIF</button><a class="whatsapp-link" href="${whatsapp}" target="_blank" rel="noopener">مشاركة عبر واتساب</a></article>`; }).join('');
+        const cards=data.map(card).join('');
         if (isNewSearch) results.innerHTML=cards; else results.insertAdjacentHTML('beforeend',cards);
         hasMore=Boolean(payload.pagination?.has_next); activePage=page; loadMore.hidden=!hasMore; loadMore.textContent='عرض المزيد';
       } catch { if (isNewSearch) { document.getElementById('count').textContent=''; results.innerHTML='<div class="status error">تعذر تحميل النتائج الآن. تحقق من اتصال الإنترنت ثم أعد المحاولة.</div>'; } loadMore.hidden=true; }
@@ -74,7 +94,10 @@
     });
     loadMore.addEventListener('click', () => { if (hasMore) searchGifs(activeTerm, activePage + 1); });
     document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { query.value=c.textContent.replace(/^[^\s]+\s*/, ''); searchGifs(query.value); }));
+    favoritesToggle.addEventListener('click', () => { if (showingFavorites) searchGifs(query.value.trim() || 'trending'); else showFavorites(); });
     results.addEventListener('click', async event => {
+      const favorite = event.target.closest('[data-favorite]');
+      if (favorite) { toggleFavorite(JSON.parse(decodeURIComponent(favorite.dataset.favorite))); return; }
       const button = event.target.closest('[data-gif-url]');
       if (!button) return;
       const original = button.textContent;
@@ -82,7 +105,7 @@
       catch { button.textContent='تعذر النسخ'; }
       setTimeout(() => button.textContent=original, 1800);
     });
-    searchGifs('trending');
+    updateFavoritesCount(); searchGifs('trending');
   </script>
 </body>
 </html>
