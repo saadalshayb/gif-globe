@@ -67,6 +67,15 @@
       renderFavoriteButtons(); favoritesToggle.innerHTML = '♥ المفضلة <span id="favoritesCount">' + items.length + '</span>';
     }
     function card(g) { const gifUrl=g.url, title=g.title || activeTerm, data=encodeURIComponent(JSON.stringify({url:gifUrl,preview_url:g.preview_url || gifUrl,title,source:g.source || 'GIF'})); return `<article class="gif"><img loading="lazy" src="${g.preview_url || gifUrl}" alt="${title.replace(/"/g,'&quot;')}"><span class="source-tag">${g.source || 'GIF'}</span><button class="favorite-button${isFavorite(gifUrl) ? ' is-favorite' : ''}" type="button" data-favorite="${data}" data-favorite-url="${encodeURIComponent(gifUrl)}" aria-label="${isFavorite(gifUrl) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${isFavorite(gifUrl) ? '♥' : '♡'}</button><button class="copy-link" type="button" data-gif-url="${encodeURIComponent(gifUrl)}">نسخ رابط الـGIF</button><button class="whatsapp-link" type="button" data-share-gif="${data}">إرسال GIF عبر واتساب</button></article>`; }
+    async function translateArabicForSearch(term) {
+      if (!/[\u0600-\u06FF]/.test(term)) return term;
+      try {
+        const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${encodeURIComponent(term)}`);
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        return data?.[0]?.map(part => part[0]).join('').trim() || term;
+      } catch { return term; }
+    }
     async function searchGifs(term='funny', page=1) {
       const isNewSearch = page === 1;
       showingFavorites = false; favoritesToggle.innerHTML = '♡ المفضلة <span id="favoritesCount">' + getFavorites().length + '</span>';
@@ -75,7 +84,9 @@
       document.getElementById('heading').textContent = term ? `نتائج: ${term}` : 'الأكثر تداولاً الآن';
       document.getElementById('subheading').textContent='نتائج متحركة تظهر مباشرة داخل المنصة';
       try {
-        const response = await fetch(`https://gifsnap.com/api/v1/gifs/search?q=${encodeURIComponent(term)}&page=${page}&limit=28`);
+        const providerTerm = await translateArabicForSearch(term);
+        if (providerTerm !== term) document.getElementById('subheading').textContent = `فهمنا طلبك بالعربية وبحثنا عنه عالميًا: ${providerTerm}`;
+        const response = await fetch(`https://gifsnap.com/api/v1/gifs/search?q=${encodeURIComponent(providerTerm)}&page=${page}&limit=28`);
         if (!response.ok) throw new Error();
         const payload = await response.json(), data = payload.data || [];
         if (!data.length) throw new Error();
